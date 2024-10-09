@@ -18,6 +18,7 @@ public enum MastodonAPI {
     case setFavorite(from: URL, token: OauthTokenEntity, id: String)
     case unFavorite(from: URL, token: OauthTokenEntity, id: String)
     case lookup(from: URL, token: OauthTokenEntity, handle: String)
+    case context(from: URL, token: OauthTokenEntity, id: String)
 }
 
 @available(macOS 13.3, *)
@@ -27,7 +28,7 @@ extension MastodonAPI: FediverseAPIType {
         switch self {
         case .registerApp(let url, _), .createToken(let url, _, _, _, _), .checkUserInfo(let url, _), 
                 .timeline(let url, _, _), .status(let url, _, _), .setFavorite(let url, _, _),
-                .unFavorite(let url, _, _), .lookup(let url, _, _):
+                .unFavorite(let url, _, _), .lookup(let url, _, _), .context(let url, _, _):
             return url
         }
     }
@@ -50,12 +51,14 @@ extension MastodonAPI: FediverseAPIType {
             return "/api/v1/statuses/\(id)/unfavourite"
         case .lookup:
             return "/api/v1/accounts/lookup"
+        case .context(_, _, let id):
+            return "/api/v1/statuses/\(id)/context"
         }
     }
     
     public var method: Alamofire.HTTPMethod {
         switch self {
-        case .checkUserInfo, .timeline, .status, .lookup:
+        case .checkUserInfo, .timeline, .status, .lookup, .context:
             return .get
         case .registerApp, .createToken, .setFavorite, .unFavorite:
             return .post
@@ -70,7 +73,7 @@ extension MastodonAPI: FediverseAPIType {
             ])
         case .checkUserInfo(_, let token), .timeline(_, let token, _), 
                 .status(_, let token, _), .setFavorite(_, let token, _),
-                .unFavorite(_, let token, _), .lookup(_, let token, _):
+                .unFavorite(_, let token, _), .lookup(_, let token, _), .context(_, let token, _):
             return HTTPHeaders([
                 "Content-Type": "application/json",
                 "Authorization": "Bearer \(token.accessToken)"

@@ -155,15 +155,15 @@ struct MastodonActivityDataMediaAttachmentMetaDataDTO: DTOType {
     
     let width: Int
     let height: Int
-    let size: String
-    let aspect: Float
+    let size: String?
+    let aspect: Float?
     
     public func toEntity() -> some EntityType {
         ActivityDataMediaAttachmentMetaDataEntity(
             width: width,
             height: height,
-            size: size,
-            aspect: aspect
+            size: size ?? "",
+            aspect: aspect ?? 0
         )
     }
 }
