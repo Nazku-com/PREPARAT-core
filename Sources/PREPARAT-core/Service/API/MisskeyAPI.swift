@@ -18,6 +18,7 @@ public enum MisskeyAPI {
     case singleNote(from: URL, token: OauthTokenEntity, noteId: String)
     case userShow(from: URL, token: OauthTokenEntity, userName: String, host: String?)
     case replies(from: URL, token: OauthTokenEntity, noteId: String)
+    case createNote(from: URL, token: OauthTokenEntity, content: PRCPostContentData)
 }
 
 extension MisskeyAPI: FediverseAPIType {
@@ -26,7 +27,8 @@ extension MisskeyAPI: FediverseAPIType {
         case .createToken(let url, _), .createSession(let url, _, _),
                 .timeline(let url, _, _), .createReaction(let url, _, _, _),
                 .deleteReaction(let url, _, _), .singleNote(let url, _, _),
-                .userShow(let url, _, _, _), .replies(from: let url, _, _):
+                .userShow(let url, _, _, _), .replies(from: let url, _, _),
+                .createNote(let url, _, _):
             return url
         }
     }
@@ -58,13 +60,16 @@ extension MisskeyAPI: FediverseAPIType {
             return "/api/users/show"
         case .replies:
             return "/api/notes/replies"
+        case .createNote:
+            return "/api/notes/create"
         }
     }
     
     public var method: Alamofire.HTTPMethod {
         switch self {
         case .createToken, .timeline, .createReaction, 
-                .deleteReaction, .singleNote, .userShow, .replies:
+                .deleteReaction, .singleNote, .userShow,
+                .replies, .createNote:
             return .post
         case .createSession:
             return .get
@@ -75,7 +80,8 @@ extension MisskeyAPI: FediverseAPIType {
         switch self {
         case .timeline(_, let token, _), .createReaction(_, let token, _, _),
                 .deleteReaction(_, let token, _), .singleNote(_, let token, _),
-                .userShow(_, let token, _, _), .replies(_, let token, _):
+                .userShow(_, let token, _, _), .replies(_, let token, _),
+                .createNote(_, let token, _):
             return HTTPHeaders([
                 "Authorization": "Bearer \(token.accessToken)",
                 "Content-Type": "application/json"
@@ -123,6 +129,20 @@ extension MisskeyAPI: FediverseAPIType {
             return [
                 "noteId": noteId
             ]
+        case .createNote(_, _, let content):
+            var noteContents = [String: Any]()
+            noteContents["visibility"] = content.visibility
+            noteContents["text"] = content.text
+            if let cw = content.cw {
+                noteContents["cw"] = cw
+            }
+            if let replyId = content.replyId {
+                noteContents["replyId"] = replyId
+            }
+            if let renoteId = content.renoteId {
+                noteContents["renoteId"] = renoteId
+            }
+            return  noteContents
         default:
             return nil
         }
