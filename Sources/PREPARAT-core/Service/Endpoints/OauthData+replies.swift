@@ -22,7 +22,6 @@ public extension OauthData {
             } catch (let error) {
                 print(error)
                 let data = await FediverseAPIService().request(api: MastodonAPI.context(from: url, token: token, id: id))
-                print(String(data: data ?? Data(), encoding: .utf8))
                 return []
             }
         case .misskey:
@@ -37,9 +36,9 @@ public extension OauthData {
 
 
 extension [String: [MastodonActivityDataDTO]]: DTOType {
-
+    
     public typealias EntityType = [PRCActivityData]
-
+    
     public func toEntity() -> [PRCActivityData] {
         var result = [PRCActivityData]()
         if let ancestors = self["ancestors"]?.toEntity() as? [PRCActivityData] {
