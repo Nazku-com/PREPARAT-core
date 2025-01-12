@@ -19,6 +19,7 @@ public struct HTMLString: Codable, Equatable, Hashable, @unchecked Sendable {
     public var htmlValue: String = ""
     public var asMarkdown: String = ""
     public var asRawText: String = ""
+    public var asNSAttributedString: NSAttributedString = .init()
     public var statusesURLs = [URL]()
     public private(set) var links = [Link]()
     

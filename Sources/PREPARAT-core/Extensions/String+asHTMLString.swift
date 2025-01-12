@@ -17,6 +17,7 @@ extension String {
             return nil
         }
         decodedValue.asRawText = decodedValue.asRawText.isEmpty ? self.escape : decodedValue.asRawText.escape
+        decodedValue.asNSAttributedString = htmlConverter(decodedValue.htmlValue.escape) ?? .init()
         return decodedValue
     }
     
@@ -28,4 +29,22 @@ extension String {
             .replacingOccurrences(of: "&apos;", with: "'")
             .replacingOccurrences(of: "&#39;", with: "’")
     }
+}
+
+
+
+private func htmlConverter(_ html: String) -> NSAttributedString? {
+    let data = Data(html
+        .replacingOccurrences(of: "“", with: "\"")
+        .replacingOccurrences(of: "”", with: "\"")
+        .utf8)
+    let attributedString = try? NSAttributedString(
+        data: data,
+        options: [
+            .documentType: NSAttributedString.DocumentType.html,
+            .characterEncoding: String.Encoding.utf8.rawValue,
+        ],
+        documentAttributes: nil
+    )
+    return attributedString
 }

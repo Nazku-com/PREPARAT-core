@@ -11,4 +11,9 @@ public struct OauthTokenEntity: EntityType, Hashable, Sendable {
     
     public let accessToken: String
     public let createdAt: Double
+    
+    public init(accessToken: String, createdAt: Double) {
+        self.accessToken = accessToken
+        self.createdAt = createdAt
+    }
 }
