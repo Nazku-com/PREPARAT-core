@@ -17,7 +17,7 @@ extension String {
             return nil
         }
         decodedValue.asRawText = decodedValue.asRawText.isEmpty ? self.escape : decodedValue.asRawText.escape
-        decodedValue.asNSAttributedString = htmlConverter(decodedValue.htmlValue.escape) ?? .init()
+        decodedValue.asNSAttributedString = htmlConverter(self.escape) ?? .init()
         return decodedValue
     }
     
